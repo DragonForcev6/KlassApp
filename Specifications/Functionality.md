@@ -1,4 +1,4 @@
-# Klass-social – krav och funktioner
+# Klassologi – krav och funktioner
 
 ## 1. Användare, profiler och roller
 

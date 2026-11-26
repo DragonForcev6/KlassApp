@@ -1,6 +1,6 @@
-# Klass-social – applikationsbeskrivning
+# Klassologi – applikationsbeskrivning
 
-Klass-social är en social applikation för elever och lärare som samlar klassens kommunikation, information, kursmaterial, planering och samarbete på en gemensam plattform.
+Klassologi är en social applikation för elever och lärare som samlar klassens kommunikation, information, kursmaterial, planering och samarbete på en gemensam plattform.
 
 Syftet är att förkorta kommunikationsvägar, stärka sammanhållningen, motverka isolering och göra det enklare för elever att hjälpa varandra och samarbeta.
 
