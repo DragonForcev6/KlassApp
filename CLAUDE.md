@@ -227,6 +227,14 @@ Escalate significant ambiguity, unexpected architectural consequences or securit
 
 Report the result and remaining uncertainties.
 
+## Version control and review
+
+- Develop each feature on its own branch, created from an up-to-date `main` and named `feature/<short-name>`.
+- Feature changes reach `main` only through a pull request. The developer reviews, approves and merges. The AI never merges.
+- Specification and documentation changes that belong to a feature are included in that feature's branch and pull request.
+- Standalone specification and documentation changes, not tied to a feature, may be committed directly to `main`.
+- Tests run locally until a CI pipeline is in place. Before opening or updating a pull request, run the relevant tests locally and state in the pull request description which tests were run and their results. Do not claim tests passed unless they were actually run.
+
 ## Continuous quality assurance
 
 Quality assurance is integrated into development, not deferred until implementation is complete.

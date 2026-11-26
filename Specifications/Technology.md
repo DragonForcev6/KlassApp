@@ -114,6 +114,7 @@ tests/
 - **Inga hemligheter i repot.** Tokens och lösenord läses från miljövariabler, aldrig från samlingar eller miljöfiler i repot. Miljöer med hemligheter synkas inte till Postmans moln.
 - **Känd utgångspunkt.** Varje Newman-körning använder en återställbar testmiljö eller skapar sin egen testdata, t.ex. en egen klass.
 - **Utvärdering.** Om samlingarna blir svåra att granska i git utvärderas textbaserade alternativ (t.ex. Bruno eller `.http`-filer).
+- **Körs lokalt tills vidare (beslutat 2026-11-26).** Testerna körs lokalt innan en pull request öppnas eller uppdateras. De flyttas till en CI-pipeline senare.
 
 ## Databas: MySQL – säkerhetsåtgärder
 
