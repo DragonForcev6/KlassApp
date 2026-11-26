@@ -1,0 +1,29 @@
+# Lokal MySQL för utveckling. Lösenorden läses från .env (kopiera .env.example).
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: klassologi-mysql
+    environment:
+      MYSQL_DATABASE: klassologi
+      MYSQL_USER: klassologi
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Sätt MYSQL_PASSWORD i .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Sätt MYSQL_ROOT_PASSWORD i .env}
+    # Serverinställningar enligt Technology.md: utf8mb4, strikt läge och UTC.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --sql-mode=STRICT_TRANS_TABLES,ONLY_FULL_GROUP_BY,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      - --default-time-zone=+00:00
+    ports:
+      # Bara åtkomlig från den egna datorn.
+      - "127.0.0.1:${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  mysql-data:

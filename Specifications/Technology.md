@@ -12,7 +12,8 @@ Status per val: **Beslutat** | **Förslag** (ej beslutat) | **Att verifiera**
 | Arkitektur | Tunn, imperativ, organiserad per funktion (se nedan) | Beslutat |
 | Databas | MySQL 8 (LTS-version) | Beslutat |
 | Dataåtkomst | Dapper + MySqlConnector, ingen EF Core (se nedan) | Beslutat |
-| Migreringar | Versionerade SQL-skript, t.ex. med DbUp | Förslag |
+| Migreringar | Versionerade SQL-skript med DbUp, körs vid uppstart (se nedan) | Beslutat |
+| Lokal databas | MySQL 8.4 LTS i Docker Compose (se nedan) | Beslutat |
 | Realtid | SignalR | Förslag – behövs från lager 4 (kommunikation) |
 | Kontrakt mot klient | OpenAPI, genererad TypeScript-klient | Förslag |
 | Klient | TypeScript + Vite + lit-html, webb först (se nedan) | Beslutat |
@@ -22,6 +23,49 @@ Status per val: **Beslutat** | **Förslag** (ej beslutat) | **Att verifiera**
 | Video/röst | LiveKit | Förslag – senare |
 | Drift | EU-baserad hosting | Förslag |
 | Test | xUnit (backend), Newman (API), Vitest och Playwright (frontend) – se nedan | Beslutat |
+
+## Arkitekturöversikt
+
+Heldragna rutor och pilar är beslutade. Streckade är förslag som ännu inte är beslutade.
+
+```mermaid
+flowchart LR
+    subgraph Klient
+        Web["Webbapp<br/>TypeScript + Vite + lit-html"]
+        Mobile["Mobilapp<br/>Capacitor-skal"]
+        ApiClient["Genererad TypeScript-klient<br/>(OpenAPI)"]
+    end
+
+    subgraph Backend["Backend – ASP.NET Core (.NET LTS)"]
+        Api["Minimal API<br/>endpoints per funktion"]
+        Features["Features/<br/>Classes, Users, Posts …<br/>affärsregler + behörighet"]
+        Hub["SignalR-hub<br/>realtid, lager 4"]
+        Data["Dapper + MySqlConnector<br/>explicit SQL"]
+    end
+
+    Auth["Identitetslösning med OIDC<br/>(t.ex. Keycloak / Identity)"]
+    DB[("MySQL 8<br/>utf8mb4, strikt läge, UTC")]
+    Migr["Versionerade SQL-skript<br/>DbUp, vid uppstart"]
+    Files[("S3-kompatibel<br/>objektlagring")]
+    LiveKit["LiveKit<br/>video/röst, senare"]
+
+    Mobile -->|bäddar in| Web
+    Web --> ApiClient
+    ApiClient -->|HTTPS / JSON| Api
+    Web -.->|WebSocket| Hub
+    Web -.->|inloggning| Auth
+    Api -.->|validerar token| Auth
+    Api --> Features
+    Hub -.-> Features
+    Features --> Data
+    Data --> DB
+    Migr -->|schemaändringar| DB
+    Features -.-> Files
+    Web -.-> LiveKit
+
+    classDef proposal stroke-dasharray: 5 5;
+    class ApiClient,Hub,Auth,Files,LiveKit proposal;
+```
 
 ## Arkitektur
 
@@ -126,6 +170,28 @@ MySQL saknar radnivåskydd (RLS) och har några standardbeteenden som påverkar 
 - **Tid:** `DATETIME(6)` och alltid UTC.
 - **Klassavgränsning:** upprätthålls i koden och verifieras med automatiska tester (se Dataåtkomst ovan).
 - **Migreringar:** små migreringar och backup före driftsättning, eftersom MySQL inte kan rulla tillbaka schemaändringar i en transaktion.
+
+## Migreringar med DbUp
+
+**Beslutat (2026-11-26):** DbUp (`dbup-mysql`, som använder MySqlConnector).
+
+- Skripten ligger i `src/Klassologi.Api/Data/Migrations/` och heter `NNNN_beskrivning.sql`, t.ex. `0002_create_classes.sql`. De bäddas in i assemblyn och körs i namnordning.
+- Körda skript registreras i tabellen `schemaversions` och körs aldrig igen. **Ett skript som redan körts ändras inte.** Ändringar görs med ett nytt skript.
+- Migreringarna körs när API:t startar. Om ett skript misslyckas startar inte API:t.
+- Om migreringar vid uppstart är rätt även i drift avgörs när driften designas. Alternativet är ett separat migreringssteg i driftsättningen, efter backup.
+
+## Lokal utvecklingsmiljö
+
+Kräver .NET SDK 10 och Docker.
+
+1. Kopiera `.env.example` till `.env` och sätt egna lösenord. Om port 3306 redan är upptagen, sätt `MYSQL_PORT`, t.ex. `3307`.
+2. Starta databasen: `docker compose up -d --wait`
+3. Lägg anslutningssträngen i user-secrets (lösenordet från `.env`, porten från `MYSQL_PORT`):
+   `dotnet user-secrets set "ConnectionStrings:Klassologi" "Server=127.0.0.1;Port=3306;Database=klassologi;User ID=klassologi;Password=<lösenord>" --project src/Klassologi.Api`
+4. Starta API:t: `dotnet run --project src/Klassologi.Api`. Migreringarna körs automatiskt.
+5. Kontrollera kopplingen: `GET http://localhost:5244/health` ska svara `{"status":"ok","database":"ok"}`.
+
+Testerna (`dotnet test`) startar en egen MySQL med Testcontainers och påverkar inte den lokala databasen.
 
 ## Att verifiera
 
