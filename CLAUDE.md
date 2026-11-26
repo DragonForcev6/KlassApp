@@ -47,6 +47,15 @@ Ask questions when unresolved ambiguity materially affects behavior, architectur
 
 Do not request confirmation for routine implementation details within an explicitly authorized task.
 
+### Open questions
+
+Unresolved questions are kept in `Specifications/Questions.md`.
+
+- When the current work depends on a decision covered by an open question, or on a new unresolved question, ask the developer at that point. Reference the question id, explain the trade-off briefly and give a recommendation.
+- Do not ask about questions the current work does not need.
+- After a decision: record it in the relevant specification and mark the question as answered (**Besvarad**) in `Questions.md`, including the decision.
+- Add new questions that surface but are not yet needed to `Questions.md` as open (**Öppen**).
+
 ## Working modes
 
 The developer may explicitly select a working mode using the following prefixes. Natural-language instructions with equivalent intent are equally valid.

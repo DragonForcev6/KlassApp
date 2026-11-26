@@ -74,6 +74,24 @@ Räcker en responsiv webbapplikation eller PWA initialt, eller krävs en mobilap
 
 Vilka funktioner ska ingå i första versionen?
 
-**Förslag (ej beslutat):** Konton och roller, en klass, anslagstavla, textkanaler och privat chatt, grupper och gemensam kalender.
+**Förslag (ej beslutat):** Lager 1–3 i [bruttolistan](UseCases.md#bruttolista): plattform, användare och poster (anslagstavla). Kommunikation, grupper, material och kalender följer därefter.
 
 **Varför det spelar roll:** Krävs för att prioritera och detaljera use cases.
+
+## Q9. Kategorisering av elever – vad avses?
+
+**Status:** Öppen
+**Berör:** Användare, profiler och roller
+
+Funktionslistan nämner "kategorisering av elever". Vad ska kategoriseras (t.ex. inriktning, grupp, behov), vem kategoriserar och vem ser kategorierna?
+
+**Varför det spelar roll:** Beroende på svaret kan det röra känsliga personuppgifter och påverka behörighetsmodellen.
+
+## Q10. Vem får publicera och kommentera på anslagstavlan?
+
+**Status:** Öppen
+**Berör:** Information och kursmaterial, Användare och roller
+
+Får bara lärare publicera på anslagstavlan, eller även elevrepresentanter och elever? Får alla kommentera och reagera?
+
+**Varför det spelar roll:** Avgör anslagstavlans karaktär (envägsinformation eller diskussion) och behovet av moderering. Krävs för att detaljera UC-08 och UC-11 i MVP.
