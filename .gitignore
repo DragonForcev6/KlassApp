@@ -1,0 +1,110 @@
+# ============================================================
+# Hemligheter och lokal konfiguration
+# ============================================================
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+secrets.json
+appsettings.*.local.json
+appsettings.Local.json
+
+# Postman/Newman: miljöfiler kan innehålla tokens (se Technology.md)
+*.postman_environment.json
+!*.example.postman_environment.json
+newman/
+
+# Claude Code: lokala inställningar per utvecklare
+.claude/settings.local.json
+
+# ============================================================
+# Backend: C# / .NET
+# ============================================================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userprefs
+*.rsuser
+*.nupkg
+*.snupkg
+.nuget/
+project.lock.json
+artifacts/
+
+# Testresultat och täckning
+[Tt]est[Rr]esult*/
+*.trx
+coverage/
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+
+# ============================================================
+# Frontend: TypeScript / Vite / Node
+# ============================================================
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+.vite/
+.npm/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vitest / Playwright
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# ============================================================
+# Mobil: Capacitor (byggutdata i de inbyggda projekten)
+# ============================================================
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+android/app/release/
+*.keystore
+*.jks
+ios/App/Pods/
+ios/App/build/
+ios/App/App/public/
+ios/DerivedData/
+xcuserdata/
+
+# ============================================================
+# Python (scripts/)
+# ============================================================
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ============================================================
+# Editorer och operativsystem
+# ============================================================
+.vs/
+.idea/
+*.swp
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.DS_Store
+Thumbs.db
+Desktop.ini
