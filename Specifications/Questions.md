@@ -60,12 +60,14 @@ Ska företag och lärosäten ha egna konton i applikationen? Vad ska de i så fa
 
 ## Q7. Webb och mobil
 
-**Status:** Öppen
+**Status:** Besvarad (2026-11-26)
 **Berör:** Tillgänglighet och plattformar, Teknik
 
 Räcker en responsiv webbapplikation eller PWA initialt, eller krävs en mobilapp från start? Mobilnotiser och snabbåtgärder från låsskärmen kan kräva en mobilapp.
 
 **Varför det spelar roll:** Påverkar teknikval och arkitektur tidigt.
+
+**Beslut:** Webb först. Mobilappar för iOS och Android tas fram genom att webbappen läggs i ett Capacitor-skal när appen ska ut i appbutikerna. Se [Technology.md](Technology.md#frontend).
 
 ## Q8. Prioritering och omfattning av första versionen
 

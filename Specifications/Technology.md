@@ -15,12 +15,13 @@ Status per val: **Beslutat** | **Förslag** (ej beslutat) | **Att verifiera**
 | Migreringar | Versionerade SQL-skript, t.ex. med DbUp | Förslag |
 | Realtid | SignalR | Förslag – behövs från lager 4 (kommunikation) |
 | Kontrakt mot klient | OpenAPI, genererad TypeScript-klient | Förslag |
-| Klient | Expo (React Native) för iOS, Android och webb | Förslag – beror på [Q7](Questions.md#q7-webb-och-mobil) |
+| Klient | TypeScript + Vite + lit-html, webb först (se nedan) | Beslutat |
+| Mobilapp | Capacitor-skal kring webbappen, när appen ska ut i appbutikerna | Beslutat |
 | Autentisering | Etablerad lösning med OIDC-stöd (t.ex. ASP.NET Core Identity, OpenIddict, Keycloak) | Förslag – beror på [Q2](Questions.md#q2-användarnas-ålder-och-inloggning) |
 | Filer | S3-kompatibel objektlagring | Förslag |
 | Video/röst | LiveKit | Förslag – senare |
 | Drift | EU-baserad hosting | Förslag |
-| Test | xUnit, Testcontainers (riktig MySQL), `WebApplicationFactory` | Förslag |
+| Test | xUnit (backend), Newman (API), Vitest och Playwright (frontend) – se nedan | Beslutat |
 
 ## Arkitektur
 
@@ -50,6 +51,27 @@ tests/
   Klassologi.Api.Tests/
 ```
 
+## Frontend
+
+**Beslutat (2026-11-26):** TypeScript + Vite + lit-html, webb först. Capacitor läggs till när appen ska ut i appbutikerna.
+
+**Principer:**
+
+- **Vanlig imperativ TypeScript** organiserad per funktion, i linje med backendens arkitektur. Inget UI-ramverk.
+- **lit-html enbart för rendering.** Det är ett mallbibliotek, inte ett ramverk, och det escapar text automatiskt. Användargenererat innehåll (inlägg, kommentarer, chatt) visas därför säkert som text.
+- **Inget `innerHTML`.** Förbjuds med en lint-regel, för att undvika XSS.
+- **API-anrop via `fetch`** genom en klient som genereras från backendens OpenAPI-kontrakt (förslag).
+- **Webben ska fungera fullt ut på egen hand.** Capacitor-skalet lägger bara till mobilfunktioner som push-notiser och notisåtgärder via plugins. Webbkoden ska inte behöva skrivas om.
+
+**Stoppunkt:** Om vi börjar bygga eget maskineri för tillstånd och omritning, troligen kring realtidschatten i lager 4, utvärderar vi ett lätt ramverk (t.ex. Svelte eller Preact) i stället för att växa ett eget.
+
+**Bakgrund:** Expo (React Native) övervägdes. Det ger mer native-känsla och fullt stöd för mobilfunktioner, men har betydligt mer ceremoni och passar sämre med den tunna, imperativa arkitekturen. Med Capacitor behåller vi en vanlig webbapp och får ändå riktiga appar för iOS och Android.
+
+**Konsekvenser:**
+
+- Gränssnittet i mobilappen är webb i en inbyggd webbvy. Det känns inte helt native vid tunga animationer eller långa listor.
+- Bygge för iOS kräver Xcode (Mac) och utvecklarkonton för App Store och Google Play.
+
 ## Dataåtkomst: Dapper utan EF Core
 
 **Beslutat (2026-11-26):** Dapper med MySqlConnector som databasdrivrutin. Ingen EF Core.
@@ -69,6 +91,30 @@ tests/
 - Medlemskapskontrollen samlas på ett ställe och anropas av varje klassbunden endpoint.
 - Automatiska tester verifierar att en användare inte kan läsa eller ändra data i en klass som användaren inte tillhör.
 
+## Test
+
+**Beslutat (2026-11-26):** xUnit för backend, Newman för API-tester, Vitest och Playwright för frontend.
+
+**Ansvarsfördelning:**
+
+| Verktyg | Vad det testar | Typiskt innehåll |
+|---------|----------------|------------------|
+| xUnit (enhetstester) | Affärsregler isolerat | Roller, behörighetsregler, anonymitet, validering |
+| xUnit + `WebApplicationFactory` + Testcontainers | API:t inifrån, mot riktig MySQL | Klassavgränsning, behörighet per endpoint, felfall, databasbeteende |
+| Newman | API:t utifrån som svart låda, mot en körande miljö | Use-case-flöden från början till slut, kontraktet mot frontend, kontroller efter driftsättning |
+| Vitest | Frontendlogik | |
+| Playwright | Hela flöden i webbläsaren | Kritiska flöden i MVP:n |
+
+**Riktlinjer:**
+
+- **Ingen dubblering.** Behörighet och klassavgränsning testas i xUnit-integrationstesterna, där testdata kan styras. Newman testar flöden och kontrakt.
+- **Oberoende verifiering.** Newman-samlingar skrivs utifrån use cases och API-kontraktet, inte utifrån implementationen.
+- **Newman, inte Postman CLI.** Newman är öppen källkod och kräver inget Postman-konto.
+- **Samlingar i repot.** Postman-samlingar exporteras till repot, hålls små och delas upp per use case eller lager.
+- **Inga hemligheter i repot.** Tokens och lösenord läses från miljövariabler, aldrig från samlingar eller miljöfiler i repot. Miljöer med hemligheter synkas inte till Postmans moln.
+- **Känd utgångspunkt.** Varje Newman-körning använder en återställbar testmiljö eller skapar sin egen testdata, t.ex. en egen klass.
+- **Utvärdering.** Om samlingarna blir svåra att granska i git utvärderas textbaserade alternativ (t.ex. Bruno eller `.http`-filer).
+
 ## Databas: MySQL – säkerhetsåtgärder
 
 MySQL saknar radnivåskydd (RLS) och har några standardbeteenden som påverkar säkerhet och dataintegritet. Följande gäller:
@@ -82,4 +128,5 @@ MySQL saknar radnivåskydd (RLS) och har några standardbeteenden som påverkar 
 
 ## Att verifiera
 
+- **Notisåtgärder i Capacitor:** att snabbsvar och reaktioner direkt från notisen och låsskärmen går att göra med befintliga plugins på både iOS och Android, eller vad som kräver egen native-kod. Behövs först för lager 8 (notiser).
 - **SAML-stöd** om inloggning via skolans federation krävs ([Q2](Questions.md#q2-användarnas-ålder-och-inloggning)).

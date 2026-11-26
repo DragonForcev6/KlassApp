@@ -122,3 +122,20 @@
 
 - Gemensamma regler för kommunikation.
 - En god ton mellan elever och lärare.
+
+## Användbarhet
+
+Gränssnittet ska följa Jakob Nielsens tio användbarhetsheuristiker:
+
+1. **Synlig systemstatus.** Användaren ska alltid se vad som händer, t.ex. att ett inlägg publiceras, att ett meddelande har skickats eller att anslutningen har tappats.
+2. **Överensstämmelse mellan system och verklighet.** Språk och begrepp ska vara elevers och lärares, inte systemets, t.ex. "klass", "anslagstavla" och "grupp".
+3. **Användarkontroll och frihet.** Det ska gå att ångra och avbryta, t.ex. redigera eller ta bort ett eget inlägg och lämna ett påbörjat flöde utan konsekvenser.
+4. **Konsekvens och standarder.** Samma sak ska se ut och fungera likadant i hela applikationen och följa etablerade konventioner för webb och mobil.
+5. **Förebygga fel.** Gränssnittet ska förhindra misstag, t.ex. bekräftelse innan något tas bort eller publiceras till hela klassen, och tydligt visa om en fråga ställs anonymt eller inte.
+6. **Känna igen hellre än minnas.** Val och information ska vara synliga när de behövs, så att användaren inte behöver komma ihåg dem mellan vyer.
+7. **Flexibilitet och effektivitet.** Vanliga aktiviteter ska gå snabbt för vana användare, utan att nya användare får det svårare.
+8. **Estetisk och minimalistisk design.** Varje vy ska bara visa det som är relevant. Onödig information konkurrerar med den viktiga.
+9. **Hjälpa användaren att känna igen, förstå och åtgärda fel.** Felmeddelanden ska vara på klarspråk, beskriva problemet och föreslå en lösning.
+10. **Hjälp och dokumentation.** Applikationen ska helst gå att använda utan hjälp, men hjälp ska finnas där den behövs och vara kopplad till uppgiften.
+
+**Verifiering:** Heuristikerna är kvalitativa krav och kan inte verifieras fullt ut med automatiska tester. De verifieras genom heuristisk utvärdering av gränssnittet, åtminstone innan varje lager i [use case-listan](UseCases.md#bruttolista) räknas som klart.
